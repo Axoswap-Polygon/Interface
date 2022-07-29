@@ -102,10 +102,7 @@ const AddLiquidity: NextPageWithLayout = () => {
           amountWithSlippage(maticAmount, settings.slippage),
           account,
           deadline,
-          {
-            gasLimit: 1000000,
-            value: maticAmount,
-          }
+          { value: maticAmount },
         );
 
         await tx.wait();
@@ -149,7 +146,6 @@ const AddLiquidity: NextPageWithLayout = () => {
           amountWithSlippage(amount2, settings.slippage),
           account,
           deadline,
-          { gasLimit: 1000000 }
         );
 
         await tx.wait();
