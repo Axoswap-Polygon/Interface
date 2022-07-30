@@ -94,7 +94,21 @@ const AddLiquidity: NextPageWithLayout = () => {
         const timestamp = (await provider.getBlock("latest")).timestamp;
         const deadline = timestamp + Number(settings.deadline) * 60;
 
-        //TODO: set gasLimit
+        let gasLimit;
+
+        try {
+         gasLimit = await routerContract.estimateGas.addLiquidityETH(
+          tokenContract.address,
+          tokenAmount,
+          amountWithSlippage(tokenAmount, settings.slippage),
+          amountWithSlippage(maticAmount, settings.slippage),
+          account,
+          deadline,
+         );
+        } catch (err) {
+          gasLimit = 3000000;
+        }
+
         let tx = await routerContract.addLiquidityETH(
           tokenContract.address,
           tokenAmount,
@@ -102,7 +116,10 @@ const AddLiquidity: NextPageWithLayout = () => {
           amountWithSlippage(maticAmount, settings.slippage),
           account,
           deadline,
-          { value: maticAmount },
+          {
+            value: maticAmount,
+            gasLimit
+          },
         );
 
         await tx.wait();
@@ -136,6 +153,22 @@ const AddLiquidity: NextPageWithLayout = () => {
         const timestamp = (await provider.getBlock("latest")).timestamp;
         const deadline = timestamp + Number(settings.deadline) * 60;
 
+        let gasLimit;
+        try {
+         gasLimit = await routerContract.estimateGas.addLiquidity(
+          token1Contract.address,
+          token2Contract.address,
+          amount1,
+          amount2,
+          amountWithSlippage(amount1, settings.slippage),
+          amountWithSlippage(amount2, settings.slippage),
+          account,
+          deadline,
+          );
+        } catch (err) {
+          gasLimit = 3000000;
+        }
+
         //TODO: set gasLimit
         let tx = await routerContract.addLiquidity(
           token1Contract.address,
@@ -146,6 +179,7 @@ const AddLiquidity: NextPageWithLayout = () => {
           amountWithSlippage(amount2, settings.slippage),
           account,
           deadline,
+          { gasLimit }
         );
 
         await tx.wait();
